@@ -3,587 +3,736 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>RUNWAY — Command Center</title>
+<title>Runway — Creator &amp; Store Dashboard</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
 
   :root{
-    --bg: #0A0D16;
-    --panel: #10141F;
-    --panel-2: #141926;
-    --line: #1E2436;
-    --line-soft: #171C2A;
-    --text: #E7EAF2;
-    --text-dim: #8890A6;
-    --text-faint: #5B6377;
-    --cyan: #5EEAD4;
-    --amber: #F5B84A;
-    --rose: #F0567A;
-    --violet: #9C8CF0;
-    --green: #7BE38C;
+    --bg0: #0A0620;
+    --bg1: #120A33;
+    --panel: rgba(255,255,255,0.045);
+    --panel-solid: #150C3B;
+    --line: rgba(139,92,246,0.20);
+    --line-soft: rgba(139,92,246,0.10);
+    --text: #ECEAFB;
+    --text-dim: #A79CD8;
+    --text-faint: #6F63A8;
+    --violet: #8B5CF6;
+    --violet-2: #A78BFA;
+    --cyan: #45D8FF;
+    --pink: #FF4FA0;
+    --amber: #FFC24F;
+    --green: #34E2A6;
+    --red: #FF5C7A;
+    --radius: 18px;
   }
 
   *{ box-sizing: border-box; margin:0; padding:0; }
 
   body{
-    background: radial-gradient(1200px 600px at 15% -10%, #131A2C 0%, var(--bg) 55%), var(--bg);
+    background:
+      radial-gradient(1000px 500px at 15% -8%, rgba(109,40,217,0.35), transparent 60%),
+      radial-gradient(900px 500px at 100% 0%, rgba(69,216,255,0.14), transparent 55%),
+      linear-gradient(180deg, #0A0620 0%, #120A33 55%, #0A0620 100%);
+    background-attachment: fixed;
     color: var(--text);
-    font-family: 'Space Grotesk', sans-serif;
+    font-family: 'Inter', sans-serif;
     min-height: 100vh;
-    padding: 0 0 60px 0;
     -webkit-font-smoothing: antialiased;
   }
 
   .mono{ font-family: 'JetBrains Mono', monospace; }
+  a{ color: inherit; }
+  button{ font-family: inherit; cursor: pointer; }
 
-  /* ---- Ticker ---- */
-  .ticker-wrap{
-    background: #070911;
-    border-bottom: 1px solid var(--line);
-    overflow: hidden;
-    white-space: nowrap;
-    padding: 8px 0;
-  }
-  .ticker{
-    display: inline-block;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 12px;
-    letter-spacing: 0.02em;
-    color: var(--text-dim);
-    animation: scroll-left 34s linear infinite;
-  }
-  .ticker span{ margin-right: 40px; }
-  .ticker b{ color: var(--text); font-weight: 600; }
-  .up{ color: var(--green); }
-  .down{ color: var(--rose); }
-  @keyframes scroll-left{
-    0%{ transform: translateX(0); }
-    100%{ transform: translateX(-50%); }
+  .shell{
+    display: grid;
+    grid-template-columns: 232px 1fr;
+    min-height: 100vh;
   }
 
-  /* ---- Header ---- */
-  header{
-    max-width: 1180px;
-    margin: 0 auto;
-    padding: 28px 24px 20px 24px;
+  .sidebar{
+    background: rgba(10,6,32,0.6);
+    border-right: 1px solid var(--line);
+    padding: 22px 16px;
     display: flex;
-    align-items: flex-end;
-    justify-content: space-between;
-    gap: 16px;
-    flex-wrap: wrap;
+    flex-direction: column;
+    gap: 22px;
+    backdrop-filter: blur(16px);
   }
   .brand{
-    display:flex;
-    align-items:center;
-    gap: 12px;
+    display:flex; align-items:center; gap:10px;
+    padding: 4px 6px 14px 6px;
+    border-bottom: 1px solid var(--line-soft);
   }
   .brand-mark{
-    width: 34px; height: 34px;
-    border-radius: 9px;
-    background: linear-gradient(135deg, var(--cyan), var(--violet));
+    width:34px; height:34px; border-radius: 10px;
+    background: linear-gradient(135deg, var(--violet), var(--cyan));
     display:flex; align-items:center; justify-content:center;
-    font-family:'JetBrains Mono', monospace;
-    font-weight:700; font-size:14px; color:#08121A;
+    font-weight:800; font-size:14px; color:#0A0620;
+    box-shadow: 0 0 22px rgba(139,92,246,0.55);
   }
-  .brand h1{
-    font-size: 19px;
-    font-weight: 600;
-    letter-spacing: -0.01em;
+  .brand-name{ font-weight:700; font-size:15px; letter-spacing:-0.01em; }
+  .brand-sub{ font-size:11px; color:var(--text-faint); font-family:'JetBrains Mono',monospace; margin-top:1px; }
+
+  .nav{ display:flex; flex-direction:column; gap:4px; }
+  .nav-item{
+    display:flex; align-items:center; gap:11px;
+    padding: 10px 12px;
+    border-radius: 12px;
+    color: var(--text-dim);
+    font-size: 13.5px; font-weight: 500;
+    background: transparent;
+    border: 1px solid transparent;
+    text-align:left; width:100%;
+    transition: all 0.15s ease;
   }
-  .brand .sub{
-    font-size: 12px;
+  .nav-item svg{ width:17px; height:17px; flex-shrink:0; opacity:0.85; }
+  .nav-item:hover{ background: rgba(139,92,246,0.08); color: var(--text); }
+  .nav-item.active{
+    background: linear-gradient(90deg, rgba(139,92,246,0.22), rgba(139,92,246,0.05));
+    border-color: rgba(139,92,246,0.35);
+    color: #fff;
+  }
+
+  .sidebar-foot{
+    margin-top:auto;
+    padding-top: 14px;
+    border-top: 1px solid var(--line-soft);
+    font-size: 11px;
     color: var(--text-faint);
-    font-family: 'JetBrains Mono', monospace;
-    margin-top: 2px;
+    font-family:'JetBrains Mono',monospace;
+    line-height:1.6;
   }
+  .sidebar-foot .dot-live{
+    display:inline-block; width:6px; height:6px; border-radius:50%;
+    background: var(--green); margin-right:6px;
+    box-shadow: 0 0 8px rgba(52,226,166,0.8);
+  }
+
+  .main{ padding: 26px 30px 60px 30px; max-width: 1180px; }
+
+  .topbar{
+    display:flex; align-items:center; justify-content:space-between;
+    margin-bottom: 24px; gap: 14px; flex-wrap:wrap;
+  }
+  .topbar h1{ font-size: 21px; font-weight: 700; letter-spacing:-0.01em; }
+  .topbar .sub{ font-size:12.5px; color:var(--text-faint); font-family:'JetBrains Mono',monospace; margin-top:3px; }
+  .top-actions{ display:flex; align-items:center; gap:10px; }
+
   .status-pill{
     display:flex; align-items:center; gap:8px;
-    font-family:'JetBrains Mono', monospace;
-    font-size: 12px;
-    color: var(--green);
-    background: rgba(123,227,140,0.08);
-    border: 1px solid rgba(123,227,140,0.25);
-    padding: 7px 12px 7px 10px;
-    border-radius: 100px;
+    font-family:'JetBrains Mono', monospace; font-size: 12px; color: var(--green);
+    background: rgba(52,226,166,0.09);
+    border: 1px solid rgba(52,226,166,0.28);
+    padding: 7px 13px 7px 11px; border-radius: 100px;
   }
-  .dot{
-    width:7px; height:7px; border-radius:50%;
-    background: var(--green);
-    box-shadow: 0 0 0 0 rgba(123,227,140,0.6);
+  .status-pill .dot{
+    width:7px; height:7px; border-radius:50%; background: var(--green);
+    box-shadow: 0 0 0 0 rgba(52,226,166,0.6);
     animation: pulse-dot 2s infinite;
   }
   @keyframes pulse-dot{
-    0%{ box-shadow: 0 0 0 0 rgba(123,227,140,0.5); }
-    70%{ box-shadow: 0 0 0 6px rgba(123,227,140,0); }
-    100%{ box-shadow: 0 0 0 0 rgba(123,227,140,0); }
+    0%{ box-shadow: 0 0 0 0 rgba(52,226,166,0.55); }
+    70%{ box-shadow: 0 0 0 7px rgba(52,226,166,0); }
+    100%{ box-shadow: 0 0 0 0 rgba(52,226,166,0); }
   }
 
-  main{ max-width: 1180px; margin: 0 auto; padding: 0 24px; }
-
-  /* ---- Stat grid ---- */
-  .stats{
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 12px;
-    margin-bottom: 28px;
-  }
-  .stat{
-    background: var(--panel);
-    border: 1px solid var(--line);
-    border-radius: 12px;
-    padding: 16px 18px;
-    position: relative;
-    overflow: hidden;
-  }
-  .stat .label{
-    font-size: 11px;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: var(--text-faint);
-    font-family: 'JetBrains Mono', monospace;
-    margin-bottom: 10px;
-  }
-  .stat .value{
-    font-size: 26px;
-    font-weight: 700;
-    letter-spacing: -0.02em;
-    font-family: 'JetBrains Mono', monospace;
-  }
-  .stat .delta{
-    font-size: 12px;
-    margin-top: 6px;
-    font-family: 'JetBrains Mono', monospace;
-  }
-  .stat svg{ position:absolute; bottom:0; right:0; opacity:0.5; }
-
-  /* ---- Section titles ---- */
-  .section-head{
-    display:flex; align-items:baseline; justify-content:space-between;
-    margin: 6px 0 14px 0;
-  }
-  .section-head h2{
-    font-size: 13px;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    color: var(--text-dim);
-    font-weight: 600;
-  }
-  .section-head .hint{
-    font-size: 12px;
-    color: var(--text-faint);
-    font-family: 'JetBrains Mono', monospace;
-  }
-
-  /* ---- Agents ---- */
-  .agents{
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 12px;
-    margin-bottom: 30px;
-  }
-  .agent{
-    background: var(--panel);
-    border: 1px solid var(--line);
-    border-radius: 14px;
-    padding: 18px;
-    display:flex;
-    flex-direction: column;
-    gap: 12px;
-    transition: border-color 0.2s ease;
-  }
-  .agent:hover{ border-color: #2A3350; }
-  .agent-top{ display:flex; align-items:center; justify-content:space-between; }
-  .agent-id{ display:flex; align-items:center; gap:10px; }
-  .avatar{
-    width: 36px; height: 36px;
-    border-radius: 10px;
-    display:flex; align-items:center; justify-content:center;
-    font-family:'JetBrains Mono', monospace;
-    font-weight: 700; font-size: 13px;
-    flex-shrink:0;
-  }
-  .agent h3{ font-size: 14px; font-weight: 600; }
-  .agent .role{ font-size: 11px; color: var(--text-faint); margin-top:1px; }
-  .badge{
-    font-family:'JetBrains Mono', monospace;
-    font-size: 10px;
-    padding: 3px 8px;
-    border-radius: 100px;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    white-space: nowrap;
-  }
-  .badge.active{ background: rgba(94,234,212,0.1); color: var(--cyan); border:1px solid rgba(94,234,212,0.3); }
-  .badge.idle{ background: rgba(136,144,166,0.1); color: var(--text-dim); border:1px solid var(--line); }
-  .badge.wait{ background: rgba(245,184,74,0.1); color: var(--amber); border:1px solid rgba(245,184,74,0.3); }
-
-  .agent .action{
-    font-size: 12.5px;
-    color: var(--text-dim);
-    line-height: 1.5;
-    min-height: 34px;
-  }
-  .agent .meta{
-    display:flex; justify-content: space-between;
-    font-family:'JetBrains Mono', monospace;
-    font-size: 11px;
-    color: var(--text-faint);
-    padding-top: 10px;
-    border-top: 1px solid var(--line-soft);
-  }
-
-  /* ---- Two column: queue + feed ---- */
-  .cols{
-    display: grid;
-    grid-template-columns: 1.1fr 0.9fr;
-    gap: 16px;
-    margin-bottom: 20px;
-  }
-  .panel{
-    background: var(--panel);
-    border: 1px solid var(--line);
-    border-radius: 14px;
-    overflow: hidden;
-  }
-  .panel-head{
-    display:flex; align-items:center; justify-content:space-between;
-    padding: 16px 18px;
-    border-bottom: 1px solid var(--line-soft);
-  }
-  .panel-head h2{
-    font-size: 13px; text-transform: uppercase; letter-spacing:0.08em;
-    color: var(--text-dim); font-weight:600;
-  }
-  .count{
-    font-family:'JetBrains Mono', monospace;
-    font-size: 11px;
-    background: rgba(240,86,122,0.12);
-    color: var(--rose);
-    border: 1px solid rgba(240,86,122,0.3);
-    padding: 2px 8px;
-    border-radius: 100px;
-  }
-
-  .queue-item{
-    padding: 14px 18px;
-    border-bottom: 1px solid var(--line-soft);
-    display:flex;
-    gap: 12px;
-    align-items:flex-start;
-  }
-  .queue-item:last-child{ border-bottom:none; }
-  .queue-tag{
-    font-family:'JetBrains Mono', monospace;
-    font-size: 9.5px;
-    text-transform:uppercase;
-    letter-spacing:0.05em;
-    padding: 3px 7px;
-    border-radius: 5px;
-    flex-shrink:0;
-    margin-top: 2px;
-  }
-  .tag-order{ background: rgba(94,234,212,0.1); color: var(--cyan); }
-  .tag-post{ background: rgba(156,140,240,0.1); color: var(--violet); }
-  .tag-mail{ background: rgba(245,184,74,0.1); color: var(--amber); }
-
-  .queue-body{ flex:1; }
-  .queue-body .title{ font-size: 13px; margin-bottom: 3px; }
-  .queue-body .sub{ font-size: 11.5px; color: var(--text-faint); font-family:'JetBrains Mono', monospace; }
-  .queue-actions{ display:flex; gap:6px; flex-shrink:0; }
   .btn{
-    font-family:'JetBrains Mono', monospace;
-    font-size: 11px;
-    padding: 6px 10px;
-    border-radius: 7px;
-    border: 1px solid var(--line);
-    background: var(--panel-2);
-    color: var(--text-dim);
-    cursor:pointer;
+    font-family:'Inter',sans-serif; font-size:12.5px; font-weight:600;
+    padding: 9px 15px; border-radius: 11px;
+    background: var(--panel); border: 1px solid var(--line); color: var(--text-dim);
     transition: all 0.15s ease;
   }
-  .btn:hover{ border-color:#2A3350; color: var(--text); }
+  .btn:hover{ border-color: rgba(139,92,246,0.5); color: #fff; }
   .btn.primary{
-    background: rgba(94,234,212,0.12);
-    border-color: rgba(94,234,212,0.35);
-    color: var(--cyan);
-  }
-  .btn.primary:hover{ background: rgba(94,234,212,0.2); }
-
-  .feed-item{
-    padding: 12px 18px;
-    border-bottom: 1px solid var(--line-soft);
-    display:flex; gap:10px; align-items:flex-start;
-    font-size: 12.5px;
-  }
-  .feed-item:last-child{ border-bottom:none; }
-  .feed-dot{
-    width:6px; height:6px; border-radius:50%;
-    margin-top: 5px; flex-shrink:0;
-  }
-  .feed-body .t{ color: var(--text-dim); }
-  .feed-body .time{ font-family:'JetBrains Mono', monospace; font-size: 10.5px; color: var(--text-faint); margin-top:2px; }
-
-  footer{
-    max-width: 1180px; margin: 20px auto 0 auto; padding: 20px 24px 0 24px;
-    font-family:'JetBrains Mono', monospace;
-    font-size: 11px;
-    color: var(--text-faint);
-    border-top: 1px solid var(--line-soft);
-    display:flex; justify-content: space-between; flex-wrap:wrap; gap:8px;
+    background: linear-gradient(135deg, var(--violet), #6D28D9);
+    border-color: transparent; color: #fff;
+    box-shadow: 0 6px 18px rgba(139,92,246,0.35);
   }
 
-  @media (max-width: 860px){
+  .page{ display:none; }
+  .page.active{ display:block; animation: fade-in 0.25s ease; }
+  @keyframes fade-in{ from{ opacity:0; transform: translateY(4px);} to{opacity:1; transform:none;} }
+
+  .card{
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    backdrop-filter: blur(14px);
+  }
+
+  .stats{ display:grid; grid-template-columns: repeat(4,1fr); gap:14px; margin-bottom:22px; }
+  .stat-card{ padding: 18px 18px 14px 18px; }
+  .stat-card .label{ font-size:11px; text-transform:uppercase; letter-spacing:0.07em; color:var(--text-faint); font-family:'JetBrains Mono',monospace; margin-bottom:10px; }
+  .stat-card .value{ font-size:25px; font-weight:800; font-family:'JetBrains Mono',monospace; letter-spacing:-0.01em; }
+  .stat-card .sub{ font-size:11.5px; color:var(--text-faint); margin-top:4px; font-family:'JetBrains Mono',monospace; }
+  .stat-card svg.spark{ width:100%; height:30px; margin-top:10px; display:block; }
+
+  .section-title{ font-size:13px; text-transform:uppercase; letter-spacing:0.08em; color:var(--text-dim); font-weight:700; margin: 26px 0 12px 0; }
+  .section-title:first-child{ margin-top:0; }
+
+  .cols{ display:grid; grid-template-columns: 1.15fr 0.85fr; gap:16px; }
+
+  .panel-head{ display:flex; align-items:center; justify-content:space-between; padding:15px 18px; border-bottom:1px solid var(--line-soft); }
+  .panel-head h2{ font-size:12.5px; text-transform:uppercase; letter-spacing:0.07em; color:var(--text-dim); font-weight:700; }
+  .badge{ font-family:'JetBrains Mono',monospace; font-size:10.5px; padding:3px 9px; border-radius:100px; }
+  .badge.count{ background:rgba(255,79,160,0.12); color:var(--pink); border:1px solid rgba(255,79,160,0.3); }
+
+  .row-item{ padding: 13px 18px; border-bottom:1px solid var(--line-soft); display:flex; gap:12px; align-items:flex-start; cursor:pointer; transition: background 0.15s; }
+  .row-item:last-child{ border-bottom:none; }
+  .row-item:hover{ background: rgba(139,92,246,0.06); }
+  .row-item .title{ font-size:13px; font-weight:600; }
+  .row-item .sub{ font-size:11.5px; color:var(--text-faint); font-family:'JetBrains Mono',monospace; margin-top:2px; }
+  .row-detail{ display:none; padding: 0 18px 14px 18px; font-size:12px; color:var(--text-dim); font-family:'JetBrains Mono',monospace; line-height:1.7; }
+  .row-detail.open{ display:block; }
+  .tag{ font-family:'JetBrains Mono',monospace; font-size:9.5px; text-transform:uppercase; padding:3px 8px; border-radius:6px; flex-shrink:0; margin-top:1px; }
+  .tag.order{ background:rgba(69,216,255,0.12); color:var(--cyan); }
+  .tag.stock{ background:rgba(255,194,79,0.12); color:var(--amber); }
+
+  .empty-state{ padding: 30px 18px; text-align:center; color:var(--text-faint); font-size:12.5px; font-family:'JetBrains Mono',monospace; }
+
+  .toast{
+    position:fixed; bottom:24px; left:50%; transform: translateX(-50%) translateY(20px);
+    background: var(--panel-solid); border:1px solid rgba(139,92,246,0.4);
+    padding:11px 18px; border-radius:12px; font-size:12.5px; opacity:0; pointer-events:none;
+    transition: all 0.25s ease; z-index: 200; box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+  }
+  .toast.show{ opacity:1; transform: translateX(-50%) translateY(0); }
+
+  .store-wrap{ display:grid; grid-template-columns: repeat(4,1fr); gap:16px; }
+  .dept{
+    padding: 20px 16px; text-align:center; position:relative; overflow:hidden;
+    display:flex; flex-direction:column; align-items:center; gap:10px;
+    transition: transform 0.15s ease, border-color 0.15s ease;
+  }
+  .dept:hover{ transform: translateY(-3px); border-color: rgba(139,92,246,0.5); }
+  .dept .stage{ width:100%; height:70px; border-radius:12px; position:relative; overflow:hidden; background: rgba(255,255,255,0.03); border:1px solid var(--line-soft); }
+  .dept h3{ font-size:14px; font-weight:700; margin-top:4px; }
+  .dept .role{ font-size:11px; color:var(--text-faint); font-family:'JetBrains Mono',monospace; }
+  .dept .dept-badge{ font-family:'JetBrains Mono',monospace; font-size:10px; padding:3px 9px; border-radius:100px; margin-top:2px; }
+  .dept-badge.live{ background:rgba(52,226,166,0.12); color:var(--green); border:1px solid rgba(52,226,166,0.3); }
+  .dept-badge.off{ background:rgba(111,99,168,0.15); color:var(--text-faint); border:1px solid var(--line); }
+
+  .conveyor-track{ position:absolute; bottom:14px; left:0; width:200%; height:8px; background: repeating-linear-gradient(90deg, rgba(69,216,255,0.5) 0 10px, transparent 10px 20px); animation: roll 1.8s linear infinite; }
+  @keyframes roll{ from{ transform: translateX(0);} to{ transform: translateX(-40px);} }
+  .box-icon{ position:absolute; bottom:18px; width:16px; height:14px; background: var(--cyan); border-radius:3px; box-shadow:0 0 10px rgba(69,216,255,0.6); animation: slide 3s linear infinite; }
+  .box-icon.b2{ animation-delay: 1.5s; }
+
+  @keyframes slide{ from{ left:-20px; } to{ left: 100%; } }
+
+  .ledger-bars{ position:absolute; bottom:10px; left:14px; right:14px; display:flex; align-items:flex-end; gap:6px; height:44px; }
+  .ledger-bars i{ flex:1; background: linear-gradient(180deg, var(--green), rgba(52,226,166,0.2)); border-radius:3px 3px 0 0; animation: barpulse 2.4s ease-in-out infinite; }
+  .ledger-bars i:nth-child(2){ animation-delay:0.3s; }
+  .ledger-bars i:nth-child(3){ animation-delay:0.6s; }
+  .ledger-bars i:nth-child(4){ animation-delay:0.9s; }
+  .ledger-bars i:nth-child(5){ animation-delay:1.2s; }
+  @keyframes barpulse{ 0%,100%{ height:30%; } 50%{ height:85%; } }
+
+  .idle-icon{ position:absolute; top:50%; left:50%; transform: translate(-50%,-50%); opacity:0.35; }
+  .idle-icon svg{ width:26px; height:26px; }
+  .dots{ position:absolute; bottom:16px; left:50%; transform:translateX(-50%); display:flex; gap:4px; opacity:0.4; }
+  .dots span{ width:5px; height:5px; border-radius:50%; background: var(--text-faint); animation: dotfade 1.4s infinite; }
+  .dots span:nth-child(2){ animation-delay:0.2s; }
+  .dots span:nth-child(3){ animation-delay:0.4s; }
+  @keyframes dotfade{ 0%,100%{ opacity:0.2;} 50%{ opacity:0.9;} }
+
+  .envelope{ position:absolute; top:18px; left:50%; transform:translateX(-50%); opacity:0.4; animation: bob 2.6s ease-in-out infinite; }
+  @keyframes bob{ 0%,100%{ transform: translate(-50%,0);} 50%{ transform: translate(-50%,-6px);} }
+
+  .modal-backdrop{
+    position:fixed; inset:0; background: rgba(6,3,20,0.72); backdrop-filter: blur(4px);
+    display:none; align-items:center; justify-content:center; z-index:300; padding:20px;
+  }
+  .modal-backdrop.open{ display:flex; }
+  .modal{
+    background: var(--panel-solid); border:1px solid rgba(139,92,246,0.35);
+    border-radius: 20px; max-width: 420px; width:100%; padding: 24px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+  }
+  .modal-top{ display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; }
+  .modal-top h3{ font-size:16px; font-weight:700; }
+  .modal-close{ width:28px; height:28px; border-radius:8px; background:var(--panel); border:1px solid var(--line); color:var(--text-dim); display:flex; align-items:center; justify-content:center; }
+  .modal p{ font-size:13px; color:var(--text-dim); line-height:1.6; margin-bottom:10px; }
+  .modal .modal-stats{ display:grid; grid-template-columns:1fr 1fr; gap:10px; margin: 14px 0; }
+  .modal .modal-stats div{ background:rgba(255,255,255,0.03); border:1px solid var(--line-soft); border-radius:12px; padding:12px; }
+  .modal .modal-stats .v{ font-family:'JetBrains Mono',monospace; font-weight:700; font-size:18px; }
+  .modal .modal-stats .l{ font-size:10.5px; color:var(--text-faint); font-family:'JetBrains Mono',monospace; margin-top:2px; }
+
+  .settings-row{ display:flex; align-items:center; justify-content:space-between; padding:15px 18px; border-bottom:1px solid var(--line-soft); }
+  .settings-row:last-child{ border-bottom:none; }
+  .settings-row .n{ font-size:13.5px; font-weight:600; }
+  .settings-row .d{ font-size:11.5px; color:var(--text-faint); font-family:'JetBrains Mono',monospace; margin-top:2px; }
+
+  footer.page-footer{ margin-top:28px; padding-top:16px; border-top:1px solid var(--line-soft); font-size:11px; color:var(--text-faint); font-family:'JetBrains Mono',monospace; display:flex; justify-content:space-between; flex-wrap:wrap; gap:8px; }
+
+  @media (max-width: 900px){
+    .shell{ grid-template-columns: 1fr; }
+    .sidebar{ position:sticky; top:0; z-index:100; flex-direction:row; align-items:center; overflow-x:auto; padding:12px 14px; gap:14px; }
+    .brand{ border-bottom:none; padding:0; flex-shrink:0; }
+    .nav{ flex-direction:row; }
+    .nav-item span{ display:none; }
+    .nav-item{ padding:9px; }
+    .sidebar-foot{ display:none; }
     .stats{ grid-template-columns: repeat(2,1fr); }
-    .agents{ grid-template-columns: repeat(2,1fr); }
     .cols{ grid-template-columns: 1fr; }
-  }
-  @media (max-width: 520px){
-    .stats{ grid-template-columns: 1fr 1fr; }
-    .agents{ grid-template-columns: 1fr; }
+    .store-wrap{ grid-template-columns: repeat(2,1fr); }
+    .main{ padding: 18px 16px 50px 16px; }
   }
 </style>
 </head>
 <body>
 
-  <div class="ticker-wrap">
-    <div class="ticker mono" id="ticker">
-      <span>RUNWAY DASHBOARD <b>live gekoppeld aan Shopify</b></span>
-      <span>SCOUT &amp; LEDGER <b>actief</b></span>
-      <span>SIGNAL &amp; RELAY <b>nog niet gekoppeld</b></span>
-      <span>RUNWAY DASHBOARD <b>live gekoppeld aan Shopify</b></span>
-      <span>SCOUT &amp; LEDGER <b>actief</b></span>
-      <span>SIGNAL &amp; RELAY <b>nog niet gekoppeld</b></span>
+  <div class="shell">
+    <div class="sidebar">
+      <div class="brand">
+        <div class="brand-mark">RW</div>
+        <div>
+          <div class="brand-name">Runway</div>
+          <div class="brand-sub" id="brand-domain">shopify</div>
+        </div>
+      </div>
+
+      <div class="nav">
+        <button class="nav-item active" data-page="overview">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9" rx="2"/><rect x="14" y="3" width="7" height="5" rx="2"/><rect x="14" y="12" width="7" height="9" rx="2"/><rect x="3" y="16" width="7" height="5" rx="2"/></svg>
+          <span>Overzicht</span>
+        </button>
+        <button class="nav-item" data-page="orders">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16l-1.5 10.5a2 2 0 0 1-2 1.5H7.5a2 2 0 0 1-2-1.5L4 4Z"/><path d="M9 9v4M15 9v4"/></svg>
+          <span>Orders</span>
+        </button>
+        <button class="nav-item" data-page="stock">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 8 12 3 3 8l9 5 9-5Z"/><path d="M3 8v8l9 5 9-5V8"/><path d="M12 13v8"/></svg>
+          <span>Voorraad</span>
+        </button>
+        <button class="nav-item" data-page="store">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9 4 4h16l1 5"/><path d="M4 9h16v10a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V9Z"/><path d="M9 20v-6h6v6"/></svg>
+          <span>Winkel</span>
+        </button>
+        <button class="nav-item" data-page="settings">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .34 1.87l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.7 1.7 0 0 0-1.87-.34 1.7 1.7 0 0 0-1.04 1.56V21a2 2 0 1 1-4 0v-.09A1.7 1.7 0 0 0 9 19.4a1.7 1.7 0 0 0-1.87.34l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.7 1.7 0 0 0 4.6 15a1.7 1.7 0 0 0-1.56-1.04H3a2 2 0 1 1 0-4h.09A1.7 1.7 0 0 0 4.6 9a1.7 1.7 0 0 0-.34-1.87l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.7 1.7 0 0 0 9 4.6a1.7 1.7 0 0 0 1.04-1.56V3a2 2 0 1 1 4 0v.09A1.7 1.7 0 0 0 15 4.6a1.7 1.7 0 0 0 1.87-.34l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.7 1.7 0 0 0 19.4 9a1.7 1.7 0 0 0 1.56 1.04H21a2 2 0 1 1 0 4h-.09A1.7 1.7 0 0 0 19.4 15Z"/></svg>
+          <span>Instellingen</span>
+        </button>
+      </div>
+
+      <div class="sidebar-foot">
+        <div><span class="dot-live"></span>backend verbonden</div>
+        <div id="sidebar-updated">laatste update: —</div>
+      </div>
+    </div>
+
+    <div class="main">
+      <div class="topbar">
+        <div>
+          <h1 id="page-title">Overzicht</h1>
+          <div class="sub" id="page-sub">live gekoppeld aan Shopify</div>
+        </div>
+        <div class="top-actions">
+          <button class="btn" id="refresh-btn">↻ Ververs</button>
+          <div class="status-pill" id="status-pill"><span class="dot"></span> Verbinden...</div>
+        </div>
+      </div>
+
+      <div class="page active" id="page-overview">
+        <div class="stats">
+          <div class="card stat-card">
+            <div class="label">Omzet vandaag</div>
+            <div class="value" id="stat-revenue">—</div>
+            <div class="sub" id="stat-revenue-sub">laden...</div>
+            <svg class="spark" id="spark-revenue" viewBox="0 0 100 30" preserveAspectRatio="none"></svg>
+          </div>
+          <div class="card stat-card">
+            <div class="label">Orders openstaand</div>
+            <div class="value" id="stat-open-orders">—</div>
+            <div class="sub" id="stat-orders-sub">laden...</div>
+            <svg class="spark" id="spark-orders" viewBox="0 0 100 30" preserveAspectRatio="none"></svg>
+          </div>
+          <div class="card stat-card">
+            <div class="label">Lage voorraad</div>
+            <div class="value" id="stat-lowstock">—</div>
+            <div class="sub">onder 5 stuks</div>
+            <svg class="spark" id="spark-lowstock" viewBox="0 0 100 30" preserveAspectRatio="none"></svg>
+          </div>
+          <div class="card stat-card">
+            <div class="label">Producten totaal</div>
+            <div class="value" id="stat-products">—</div>
+            <div class="sub">in catalogus</div>
+            <svg class="spark" id="spark-products" viewBox="0 0 100 30" preserveAspectRatio="none"></svg>
+          </div>
+        </div>
+
+        <div class="cols">
+          <div class="card">
+            <div class="panel-head"><h2>Recente orders</h2><span class="badge count" id="mini-orders-count">—</span></div>
+            <div id="mini-orders-list"><div class="empty-state">Laden...</div></div>
+          </div>
+          <div class="card">
+            <div class="panel-head"><h2>Lage voorraad</h2></div>
+            <div id="mini-stock-list"><div class="empty-state">Laden...</div></div>
+          </div>
+        </div>
+
+        <footer class="page-footer">
+          <span>Runway v0.2 — gekoppeld aan <span id="footer-domain">Shopify</span></span>
+          <span id="footer-updated">laatste update: —</span>
+        </footer>
+      </div>
+
+      <div class="page" id="page-orders">
+        <div class="card">
+          <div class="panel-head"><h2>Open orders</h2><span class="badge count" id="orders-count">—</span></div>
+          <div id="orders-list"><div class="empty-state">Orders laden...</div></div>
+        </div>
+      </div>
+
+      <div class="page" id="page-stock">
+        <div class="card">
+          <div class="panel-head"><h2>Producten met lage voorraad</h2></div>
+          <div id="stock-list-full"><div class="empty-state">Laden...</div></div>
+        </div>
+      </div>
+
+      <div class="page" id="page-store">
+        <div class="section-title">Klik op een afdeling voor details</div>
+        <div class="store-wrap">
+          <div class="dept" data-agent="scout">
+            <div class="stage">
+              <div class="conveyor-track"></div>
+              <div class="box-icon"></div>
+              <div class="box-icon b2"></div>
+            </div>
+            <h3>Scout</h3>
+            <div class="role">Orders &amp; voorraad</div>
+            <span class="dept-badge live" id="dept-badge-scout">Live</span>
+          </div>
+
+          <div class="dept" data-agent="signal">
+            <div class="stage">
+              <div class="idle-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="7" y="2" width="10" height="18" rx="2"/><path d="M11 17h2"/></svg></div>
+              <div class="dots"><span></span><span></span><span></span></div>
+            </div>
+            <h3>Signal</h3>
+            <div class="role">Social &amp; content</div>
+            <span class="dept-badge off">Niet gekoppeld</span>
+          </div>
+
+          <div class="dept" data-agent="relay">
+            <div class="stage">
+              <div class="envelope"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg></div>
+              <div class="dots"><span></span><span></span><span></span></div>
+            </div>
+            <h3>Relay</h3>
+            <div class="role">Klantcontact &amp; mail</div>
+            <span class="dept-badge off">Niet gekoppeld</span>
+          </div>
+
+          <div class="dept" data-agent="ledger">
+            <div class="stage">
+              <div class="ledger-bars"><i></i><i></i><i></i><i></i><i></i></div>
+            </div>
+            <h3>Ledger</h3>
+            <div class="role">Omzet &amp; rapportage</div>
+            <span class="dept-badge live" id="dept-badge-ledger">Live</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="page" id="page-settings">
+        <div class="card">
+          <div class="panel-head"><h2>Koppelingen</h2></div>
+          <div class="settings-row">
+            <div><div class="n">Shopify</div><div class="d" id="settings-domain">—</div></div>
+            <span class="dept-badge live">Verbonden</span>
+          </div>
+          <div class="settings-row">
+            <div><div class="n">Scout — Orders &amp; voorraad</div><div class="d">via backend API</div></div>
+            <span class="dept-badge live">Live</span>
+          </div>
+          <div class="settings-row">
+            <div><div class="n">Ledger — Omzet &amp; rapportage</div><div class="d">via backend API</div></div>
+            <span class="dept-badge live">Live</span>
+          </div>
+          <div class="settings-row">
+            <div><div class="n">Signal — Social &amp; content</div><div class="d">nog geen social-tool gekoppeld</div></div>
+            <span class="dept-badge off">Niet gekoppeld</span>
+          </div>
+          <div class="settings-row">
+            <div><div class="n">Relay — Klantcontact &amp; mail</div><div class="d">nog geen mailbox gekoppeld</div></div>
+            <span class="dept-badge off">Niet gekoppeld</span>
+          </div>
+        </div>
+
+        <div class="section-title">Techniek</div>
+        <div class="card">
+          <div class="settings-row">
+            <div><div class="n">Backend</div><div class="d mono" id="settings-backend">—</div></div>
+            <button class="btn" id="settings-refresh">Ververs nu</button>
+          </div>
+          <div class="settings-row">
+            <div><div class="n">Laatst opgehaald</div><div class="d mono" id="settings-updated">—</div></div>
+          </div>
+        </div>
+      </div>
+
     </div>
   </div>
 
-  <header>
-    <div class="brand">
-      <div class="brand-mark">RW</div>
-      <div>
-        <h1>Runway Command Center</h1>
-        <div class="sub" id="store-domain">00j4qm-pn.myshopify.com — live data</div>
+  <div class="modal-backdrop" id="modal-backdrop">
+    <div class="modal">
+      <div class="modal-top">
+        <h3 id="modal-title">Agent</h3>
+        <button class="modal-close" id="modal-close">✕</button>
       </div>
+      <p id="modal-desc"></p>
+      <div class="modal-stats" id="modal-stats"></div>
+      <button class="btn primary" id="modal-action" style="width:100%; margin-top:6px;">Sluiten</button>
     </div>
-    <div class="status-pill" id="status-pill"><span class="dot"></span> Verbinden...</div>
-  </header>
+  </div>
 
-  <main>
-
-    <div class="stats">
-      <div class="stat">
-        <div class="label">Omzet vandaag</div>
-        <div class="value" id="stat-revenue">—</div>
-        <div class="delta" id="stat-revenue-sub" style="color:var(--text-faint)">laden...</div>
-      </div>
-      <div class="stat">
-        <div class="label">Orders openstaand</div>
-        <div class="value" id="stat-open-orders">—</div>
-        <div class="delta" style="color:var(--text-faint)" id="stat-orders-today">laden...</div>
-      </div>
-      <div class="stat">
-        <div class="label">Producten met lage voorraad</div>
-        <div class="value" id="stat-lowstock">—</div>
-        <div class="delta" style="color:var(--text-faint)">onder 5 stuks</div>
-      </div>
-      <div class="stat">
-        <div class="label">Producten totaal</div>
-        <div class="value" id="stat-products">—</div>
-        <div class="delta" style="color:var(--text-faint)">in catalogus</div>
-      </div>
-    </div>
-
-    <div class="section-head">
-      <h2>Jouw agents</h2>
-      <span class="hint" id="agents-hint">laden...</span>
-    </div>
-    <div class="agents">
-
-      <div class="agent">
-        <div class="agent-top">
-          <div class="agent-id">
-            <div class="avatar" style="background:rgba(94,234,212,0.12); color:var(--cyan); border:1px solid rgba(94,234,212,0.3);">SC</div>
-            <div>
-              <h3>Scout</h3>
-              <div class="role">Orders &amp; voorraad · live</div>
-            </div>
-          </div>
-          <span class="badge active" id="scout-badge">Verbinden</span>
-        </div>
-        <div class="action" id="scout-action">Data ophalen bij Shopify...</div>
-        <div class="meta"><span id="scout-meta-left">—</span><span id="scout-meta-right">—</span></div>
-      </div>
-
-      <div class="agent">
-        <div class="agent-top">
-          <div class="agent-id">
-            <div class="avatar" style="background:rgba(156,140,240,0.12); color:var(--violet); border:1px solid rgba(156,140,240,0.3);">SI</div>
-            <div>
-              <h3>Signal</h3>
-              <div class="role">Social &amp; content · nog niet gekoppeld</div>
-            </div>
-          </div>
-          <span class="badge idle">Niet actief</span>
-        </div>
-        <div class="action">Deze agent is nog niet aangesloten op een social-tool.</div>
-        <div class="meta"><span>0 concepten</span><span>—</span></div>
-      </div>
-
-      <div class="agent">
-        <div class="agent-top">
-          <div class="agent-id">
-            <div class="avatar" style="background:rgba(245,184,74,0.12); color:var(--amber); border:1px solid rgba(245,184,74,0.3);">RE</div>
-            <div>
-              <h3>Relay</h3>
-              <div class="role">Klantcontact &amp; mail · nog niet gekoppeld</div>
-            </div>
-          </div>
-          <span class="badge idle">Niet actief</span>
-        </div>
-        <div class="action">Deze agent is nog niet aangesloten op je mailbox.</div>
-        <div class="meta"><span>0 mails</span><span>—</span></div>
-      </div>
-
-      <div class="agent">
-        <div class="agent-top">
-          <div class="agent-id">
-            <div class="avatar" style="background:rgba(123,227,140,0.12); color:var(--green); border:1px solid rgba(123,227,140,0.3);">LE</div>
-            <div>
-              <h3>Ledger</h3>
-              <div class="role">Omzet &amp; rapportage · live</div>
-            </div>
-          </div>
-          <span class="badge active" id="ledger-badge">Verbinden</span>
-        </div>
-        <div class="action" id="ledger-action">Data ophalen bij Shopify...</div>
-        <div class="meta"><span id="ledger-meta-left">—</span><span id="ledger-meta-right">net nu</span></div>
-      </div>
-
-    </div>
-
-    <div class="cols">
-      <div class="panel">
-        <div class="panel-head">
-          <h2>Open orders</h2>
-          <span class="count" id="orders-count">—</span>
-        </div>
-        <div id="orders-list">
-          <div class="queue-item"><div class="queue-body"><div class="sub">Orders laden...</div></div></div>
-        </div>
-      </div>
-
-      <div class="panel">
-        <div class="panel-head">
-          <h2>Lage voorraad</h2>
-        </div>
-        <div id="stock-list">
-          <div class="feed-item"><div class="feed-body"><div class="t">Laden...</div></div></div>
-        </div>
-      </div>
-    </div>
-
-    <footer>
-      <span>RUNWAY v0.1 — gekoppeld aan <span id="footer-domain">Shopify</span></span>
-      <span id="footer-updated">laatste update: —</span>
-    </footer>
-
-  </main>
+  <div class="toast" id="toast"></div>
 
   <script>
     const API_BASE = "https://runway-backend-nu.vercel.app";
+    const STORE_DOMAIN = "00j4qm-pn.myshopify.com";
 
-    function euro(n) {
-      return new Intl.NumberFormat('nl-NL', { style: 'currency', currency: 'EUR' }).format(n || 0);
+    let lastSummary = null;
+    let lastOrders = [];
+    const series = { revenue: [], orders: [], lowstock: [], products: [] };
+
+    function euro(n){ return new Intl.NumberFormat('nl-NL', { style:'currency', currency:'EUR' }).format(n || 0); }
+    function timeLabel(iso){ const d = new Date(iso); return d.toLocaleTimeString('nl-NL', { hour:'2-digit', minute:'2-digit' }); }
+    function showToast(msg){
+      const t = document.getElementById('toast');
+      t.textContent = msg; t.classList.add('show');
+      clearTimeout(t._timer);
+      t._timer = setTimeout(()=> t.classList.remove('show'), 2200);
     }
 
-    function timeAgo(iso) {
-      const d = new Date(iso);
-      return d.toLocaleTimeString('nl-NL', { hour: '2-digit', minute: '2-digit' });
+    document.querySelectorAll('.nav-item').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        const page = btn.dataset.page;
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+        document.getElementById('page-' + page).classList.add('active');
+        const titles = { overview:['Overzicht','live gekoppeld aan Shopify'], orders:['Orders','al je openstaande bestellingen'], stock:['Voorraad','producten die aandacht nodig hebben'], store:['Winkel','klik op een afdeling voor details'], settings:['Instellingen','koppelingen en techniek'] };
+        document.getElementById('page-title').textContent = titles[page][0];
+        document.getElementById('page-sub').textContent = titles[page][1];
+      });
+    });
+
+    function renderSpark(id, arr, color){
+      const svg = document.getElementById(id);
+      if (!svg) return;
+      if (arr.length < 2){
+        svg.innerHTML = '';
+        return;
+      }
+      const min = Math.min(...arr), max = Math.max(...arr);
+      const range = (max - min) || 1;
+      const pts = arr.map((v,i) => {
+        const x = (i / (arr.length - 1)) * 100;
+        const y = 28 - ((v - min) / range) * 26;
+        return `${x},${y}`;
+      }).join(' ');
+      svg.innerHTML = `<polyline points="${pts}" fill="none" stroke="${color}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" opacity="0.9"/>`;
+    }
+    function pushSeries(key, val, cap){
+      series[key].push(val);
+      if (series[key].length > (cap||20)) series[key].shift();
     }
 
-    async function loadSummary() {
-      try {
+    async function loadSummary(){
+      try{
         const res = await fetch(`${API_BASE}/api/summary`);
         const data = await res.json();
+        lastSummary = data;
 
         document.getElementById('stat-revenue').textContent = euro(data.revenue_today);
         document.getElementById('stat-revenue-sub').textContent = `${data.orders_today || 0} orders vandaag`;
-        document.getElementById('stat-orders-today').textContent = `${data.orders_today || 0} vandaag binnengekomen`;
         document.getElementById('stat-open-orders').textContent = data.open_orders ?? '—';
+        document.getElementById('stat-orders-sub').textContent = `${data.orders_today || 0} vandaag binnengekomen`;
         document.getElementById('stat-lowstock').textContent = (data.low_stock || []).length;
         document.getElementById('stat-products').textContent = data.product_count ?? '—';
 
+        pushSeries('revenue', data.revenue_today || 0);
+        pushSeries('orders', data.open_orders || 0);
+        pushSeries('lowstock', (data.low_stock || []).length);
+        pushSeries('products', data.product_count || 0);
+        renderSpark('spark-revenue', series.revenue, '#45D8FF');
+        renderSpark('spark-orders', series.orders, '#FF4FA0');
+        renderSpark('spark-lowstock', series.lowstock, '#FFC24F');
+        renderSpark('spark-products', series.products, '#8B5CF6');
+
         document.getElementById('status-pill').innerHTML = '<span class="dot"></span> Alles operationeel';
-        document.getElementById('agents-hint').textContent = '2 live · 2 nog niet gekoppeld';
+        const upd = timeLabel(data.generated_at);
+        document.getElementById('footer-updated').textContent = `laatste update: ${upd}`;
+        document.getElementById('sidebar-updated').textContent = `laatste update: ${upd}`;
+        document.getElementById('footer-domain').textContent = STORE_DOMAIN;
+        document.getElementById('brand-domain').textContent = STORE_DOMAIN;
+        document.getElementById('settings-domain').textContent = STORE_DOMAIN;
+        document.getElementById('settings-backend').textContent = API_BASE;
+        document.getElementById('settings-updated').textContent = upd;
 
-        document.getElementById('scout-badge').textContent = 'Actief';
-        document.getElementById('scout-action').textContent =
-          `${data.open_orders || 0} open orders, ${(data.low_stock || []).length} producten met lage voorraad.`;
-        document.getElementById('scout-meta-left').textContent = `${data.product_count || 0} producten gevolgd`;
-        document.getElementById('scout-meta-right').textContent = 'net nu';
-
-        document.getElementById('ledger-badge').textContent = 'Actief';
-        document.getElementById('ledger-action').textContent =
-          `Omzet vandaag: ${euro(data.revenue_today)} over ${data.orders_today || 0} orders.`;
-        document.getElementById('ledger-meta-left').textContent = `laatst bijgewerkt ${timeAgo(data.generated_at)}`;
-
-        document.getElementById('footer-domain').textContent = "00j4qm-pn.myshopify.com";
-        document.getElementById('footer-updated').textContent = `laatste update: ${timeAgo(data.generated_at)}`;
-
-        // Lage voorraad lijst
-        const stockList = document.getElementById('stock-list');
-        if ((data.low_stock || []).length === 0) {
-          stockList.innerHTML = '<div class="feed-item"><div class="feed-body"><div class="t">Geen producten met lage voorraad.</div></div></div>';
-        } else {
-          stockList.innerHTML = data.low_stock.map(item => `
-            <div class="feed-item">
-              <span class="feed-dot" style="background:var(--amber)"></span>
-              <div class="feed-body">
-                <div class="t"><b>${item.product}</b> — ${item.variant}</div>
-                <div class="time">${item.quantity} op voorraad</div>
-              </div>
-            </div>
-          `).join('');
-        }
-      } catch (err) {
-        document.getElementById('status-pill').innerHTML = '<span class="dot" style="background:var(--rose)"></span> Verbinding mislukt';
-        document.getElementById('scout-action').textContent = 'Kon geen data ophalen bij de backend.';
-        document.getElementById('ledger-action').textContent = 'Kon geen data ophalen bij de backend.';
+        renderMiniStock(data.low_stock || []);
+        renderFullStock(data.low_stock || []);
+      } catch(err){
+        document.getElementById('status-pill').innerHTML = '<span class="dot" style="background:var(--red)"></span> Verbinding mislukt';
         console.error(err);
       }
     }
 
-    async function loadOrders() {
-      try {
+    async function loadOrders(){
+      try{
         const res = await fetch(`${API_BASE}/api/orders`);
         const data = await res.json();
-        const orders = data.orders || [];
-
-        document.getElementById('orders-count').textContent = orders.length;
-        const list = document.getElementById('orders-list');
-
-        if (orders.length === 0) {
-          list.innerHTML = '<div class="queue-item"><div class="queue-body"><div class="sub">Geen openstaande orders.</div></div></div>';
-          return;
-        }
-
-        list.innerHTML = orders.map(o => `
-          <div class="queue-item">
-            <span class="queue-tag tag-order">${o.name}</span>
-            <div class="queue-body">
-              <div class="title">${o.customer} — ${euro(o.total)}</div>
-              <div class="sub">${o.fulfillment_status || 'niet verzonden'} · ${o.financial_status || ''} · ${timeAgo(o.created_at)}</div>
-            </div>
-          </div>
-        `).join('');
-      } catch (err) {
-        document.getElementById('orders-list').innerHTML = '<div class="queue-item"><div class="queue-body"><div class="sub">Kon orders niet laden.</div></div></div>';
+        lastOrders = data.orders || [];
+        document.getElementById('orders-count').textContent = lastOrders.length;
+        document.getElementById('mini-orders-count').textContent = lastOrders.length;
+        renderOrdersList('orders-list', lastOrders, true);
+        renderOrdersList('mini-orders-list', lastOrders.slice(0,5), false);
+      } catch(err){
+        document.getElementById('orders-list').innerHTML = '<div class="empty-state">Kon orders niet laden.</div>';
         console.error(err);
       }
     }
 
-    loadSummary();
-    loadOrders();
-    setInterval(() => { loadSummary(); loadOrders(); }, 60000); // elke minuut verversen
+    function renderOrdersList(targetId, orders, expandable){
+      const el = document.getElementById(targetId);
+      if (orders.length === 0){ el.innerHTML = '<div class="empty-state">Geen openstaande orders.</div>'; return; }
+      el.innerHTML = orders.map((o,i) => `
+        <div class="row-item" data-idx="${targetId}-${i}">
+          <span class="tag order">${o.name}</span>
+          <div style="flex:1;">
+            <div class="title">${o.customer} — ${euro(o.total)}</div>
+            <div class="sub">${o.fulfillment_status || 'niet verzonden'} · ${o.financial_status || ''} · ${timeLabel(o.created_at)}</div>
+          </div>
+        </div>
+        ${expandable ? `<div class="row-detail" id="detail-${targetId}-${i}">
+          Order ID: ${o.id}<br>
+          Valuta: ${o.currency}<br>
+          Aangemaakt: ${new Date(o.created_at).toLocaleString('nl-NL')}<br>
+          Betaalstatus: ${o.financial_status || 'onbekend'}<br>
+          Verzendstatus: ${o.fulfillment_status || 'niet verzonden'}
+        </div>` : ''}
+      `).join('');
+
+      if (expandable){
+        orders.forEach((o,i) => {
+          const row = el.querySelector(`[data-idx="${targetId}-${i}"]`);
+          row.addEventListener('click', () => {
+            document.getElementById(`detail-${targetId}-${i}`).classList.toggle('open');
+          });
+        });
+      }
+    }
+
+    function renderMiniStock(items){
+      const el = document.getElementById('mini-stock-list');
+      if (items.length === 0){ el.innerHTML = '<div class="empty-state">Geen producten met lage voorraad.</div>'; return; }
+      el.innerHTML = items.slice(0,5).map(item => `
+        <div class="row-item" data-copy="${item.product} — ${item.variant}">
+          <span class="tag stock">${item.quantity}</span>
+          <div style="flex:1;">
+            <div class="title">${item.product}</div>
+            <div class="sub">${item.variant}</div>
+          </div>
+        </div>
+      `).join('');
+      attachCopyHandlers(el);
+    }
+
+    function renderFullStock(items){
+      const el = document.getElementById('stock-list-full');
+      if (items.length === 0){ el.innerHTML = '<div class="empty-state">Geen producten met lage voorraad. 🎉</div>'; return; }
+      el.innerHTML = items.map(item => `
+        <div class="row-item" data-copy="${item.product} — ${item.variant}">
+          <span class="tag stock">${item.quantity} over</span>
+          <div style="flex:1;">
+            <div class="title">${item.product}</div>
+            <div class="sub">${item.variant} · klik om te kopiëren</div>
+          </div>
+        </div>
+      `).join('');
+      attachCopyHandlers(el);
+    }
+
+    function attachCopyHandlers(container){
+      container.querySelectorAll('[data-copy]').forEach(row => {
+        row.addEventListener('click', () => {
+          const text = row.getAttribute('data-copy');
+          if (navigator.clipboard){
+            navigator.clipboard.writeText(text).then(()=> showToast('Gekopieerd: ' + text));
+          } else {
+            showToast(text);
+          }
+        });
+      });
+    }
+
+    const agentInfo = {
+      scout: {
+        title: 'Scout — Orders & voorraad',
+        desc: 'Houdt je open orders en voorraadniveaus in de gaten, rechtstreeks vanuit Shopify.',
+        live: true
+      },
+      ledger: {
+        title: 'Ledger — Omzet & rapportage',
+        desc: 'Berekent je omzet van vandaag op basis van je binnengekomen orders.',
+        live: true
+      },
+      signal: {
+        title: 'Signal — Social & content',
+        desc: 'Nog niet gekoppeld. Deze agent kan later content-ideeën en captions voorbereiden zodra hij is aangesloten op een social-tool.',
+        live: false
+      },
+      relay: {
+        title: 'Relay — Klantcontact & mail',
+        desc: 'Nog niet gekoppeld. Deze agent kan later mails lezen en conceptantwoorden klaarzetten zodra je mailbox is verbonden.',
+        live: false
+      }
+    };
+
+    document.querySelectorAll('.dept').forEach(dept => {
+      dept.addEventListener('click', () => openAgentModal(dept.dataset.agent));
+    });
+
+    function openAgentModal(key){
+      const info = agentInfo[key];
+      document.getElementById('modal-title').textContent = info.title;
+      document.getElementById('modal-desc').textContent = info.desc;
+
+      const statsEl = document.getElementById('modal-stats');
+      if (info.live && lastSummary){
+        if (key === 'scout'){
+          statsEl.innerHTML = `
+            <div><div class="v">${lastSummary.open_orders ?? '—'}</div><div class="l">open orders</div></div>
+            <div><div class="v">${(lastSummary.low_stock||[]).length}</div><div class="l">lage voorraad</div></div>`;
+        } else if (key === 'ledger'){
+          statsEl.innerHTML = `
+            <div><div class="v">${euro(lastSummary.revenue_today)}</div><div class="l">omzet vandaag</div></div>
+            <div><div class="v">${lastSummary.orders_today ?? '—'}</div><div class="l">orders vandaag</div></div>`;
+        }
+      } else {
+        statsEl.innerHTML = `<div style="grid-column:1/3;"><div class="l">Nog geen data — koppel eerst een tool.</div></div>`;
+      }
+
+      document.getElementById('modal-backdrop').classList.add('open');
+    }
+    document.getElementById('modal-close').addEventListener('click', closeModal);
+    document.getElementById('modal-action').addEventListener('click', closeModal);
+    document.getElementById('modal-backdrop').addEventListener('click', (e) => {
+      if (e.target.id === 'modal-backdrop') closeModal();
+    });
+    function closeModal(){ document.getElementById('modal-backdrop').classList.remove('open'); }
+
+    function refreshAll(){ loadSummary(); loadOrders(); }
+    document.getElementById('refresh-btn').addEventListener('click', () => { refreshAll(); showToast('Data ververst'); });
+    document.getElementById('settings-refresh').addEventListener('click', () => { refreshAll(); showToast('Data ververst'); });
+
+    refreshAll();
+    setInterval(refreshAll, 60000);
   </script>
 
 </body>
